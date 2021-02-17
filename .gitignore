@@ -9,3 +9,4 @@ __pycache__
 
 # Project specific
 data/
+download_and_prepare/dbconfig.json
