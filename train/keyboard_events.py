@@ -6,7 +6,7 @@ from random import shuffle
 keyboard_events = tf.keras.models.Sequential()
 keyboard_events.add(tf.keras.layers.SimpleRNN(8, activation="relu"))
 keyboard_events.add(tf.keras.layers.Dense(2))
-keyboard_events.compile(optimizer="adam", loss=tf.keras.losses.BinaryCrossentropy())
+keyboard_events.compile(optimizer="adam", loss=tf.keras.losses.BinaryCrossentropy(), metrics=["acc"])
 
 chunks = 40
 metric = "kbd"
@@ -35,6 +35,7 @@ for i in range(epoch_bundles):
     if chunk != chunks:
       keyboard_events.fit(x_train, y_train)
     else:
-      print(f"Loss: {keyboard_events.evaluate(x_train, y_train)}\n")
+      metrics = keyboard_events.evaluate(x_train, y_train)
+      print(f"Loss: {metrics[0]} Accuracy: {metrics[1]}\n")
 
 keyboard_events.save("model/keyboard_events")

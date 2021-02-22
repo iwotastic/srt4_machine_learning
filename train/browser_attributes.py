@@ -7,7 +7,7 @@ browser_attributes = tf.keras.models.Sequential()
 browser_attributes.add(tf.keras.Input(shape=(11,)))
 browser_attributes.add(tf.keras.layers.Dense(32, activation="relu"))
 browser_attributes.add(tf.keras.layers.Dense(2))
-browser_attributes.compile(optimizer="adam", loss=tf.keras.losses.BinaryCrossentropy())
+browser_attributes.compile(optimizer="adam", loss=tf.keras.losses.BinaryCrossentropy(), metrics=["acc"])
 
 chunks = 2
 metric = "browser"
@@ -36,6 +36,7 @@ for i in range(epoch_bundles):
     if chunk != chunks:
       browser_attributes.fit(x_train, y_train)
     else:
-      print(f"Loss: {browser_attributes.evaluate(x_train, y_train)}\n")
+      metrics = browser_attributes.evaluate(x_train, y_train)
+      print(f"Loss: {metrics[0]} Accuracy: {metrics[1]}\n")
 
 browser_attributes.save("model/browser_attributes")
