@@ -4,10 +4,12 @@ import pickle
 from random import shuffle
 
 mouse_movements = tf.keras.models.Sequential()
-mouse_movements.add(tf.keras.layers.Conv2D(4, 4, input_shape=(600, 600, 3), activation="relu"))
-mouse_movements.add(tf.keras.layers.Conv2D(6, 4, activation="relu"))
+mouse_movements.add(tf.keras.layers.Conv2D(4, 4, input_shape=(600, 600, 3), activation="tanh"))
+mouse_movements.add(tf.keras.layers.Conv2D(3, 4, activation="relu"))
+mouse_movements.add(tf.keras.layers.Conv2D(2, 4, activation="tanh"))
+mouse_movements.add(tf.keras.layers.Conv2D(1, 4, activation="relu"))
 mouse_movements.add(tf.keras.layers.Flatten())
-mouse_movements.add(tf.keras.layers.Dense(2, activation="relu"))
+mouse_movements.add(tf.keras.layers.Dense(2, activation="tanh"))
 mouse_movements.compile(optimizer="adam", loss=tf.keras.losses.BinaryCrossentropy(), metrics=["acc"])
 
 chunks = 20
