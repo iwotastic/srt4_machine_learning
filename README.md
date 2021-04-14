@@ -28,3 +28,5 @@ source venv/bin/activate
 # Install requirements with pip
 pip install -r ./requirements.txt
 ```
+
+**Note:** You may need to switch out the `tensorflow` entry in [`requirements.txt`](/requirements.txt) if your machine is not an Intel-based Mac running a recent macOS. If it is, well good job, you shouldn't have to change a thing.
