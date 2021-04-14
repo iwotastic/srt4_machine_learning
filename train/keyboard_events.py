@@ -12,30 +12,40 @@ chunks = 40
 metric = "kbd"
 size = 200
 epoch_bundles = 10
+training_chunks = [(
+  f"preprocessed_data/human_{metric}_chunk_{chunk_num}_size_{size}_round_1.dat",
+  f"preprocessed_data/bot_{metric}_chunk_{chunk_num}_size_{size}_round_1.dat"
+) for chunk_num in range(40)] + [(
+  f"preprocessed_data/human_{metric}_chunk_{chunk_num}_size_{size}_round_2.dat",
+  f"preprocessed_data/bot_{metric}_chunk_{chunk_num}_size_{size}_round_2.dat"
+) for chunk_num in range(13)]
+
+validation_chunk = (
+  f"preprocessed_data/human_{metric}_chunk_40_size_{size}_round_1.dat",
+  f"preprocessed_data/bot_{metric}_chunk_40_size_{size}_round_1.dat"
+)
 
 for i in range(epoch_bundles):
   print(f"==== EPOCH BUNDLE {i + 1} ====")
 
-  chunk_beginning = list(range(chunks))
-  shuffle(chunk_beginning)
-  chunk_list = chunk_beginning + [chunks]
+  shuffle(training_chunks)
+  chunk_list = training_chunks + [validation_chunk]
   
-  for chunk in chunk_list:
-    print(f"Chunk {chunk}:" if chunk != chunks else "Validation")
+  for chunk_num, (human_chunk, bot_chunk) in enumerate(chunk_list):
+    print(f"Chunk {chunk_num}:" if (human_chunk, bot_chunk) != validation_chunk else "Validation")
 
-    with open(f"/Volumes/SRT4Data/bot_{metric}_chunk_{chunk}_size_{size}.dat", "rb") as bot_keyboard_data_file:
-      bot_keyboard_data = pickle.load(bot_keyboard_data_file)
+    with open(bot_chunk, "rb") as bot_mouse_data_file:
+      bot_mouse_data = pickle.load(bot_mouse_data_file)
 
-    with open(f"/Volumes/SRT4Data/human_{metric}_chunk_{chunk}_size_{size}.dat", "rb") as human_keyboard_data_file:
-      human_keyboard_data = pickle.load(human_keyboard_data_file)
+    with open(human_chunk, "rb") as human_mouse_data_file:
+      human_mouse_data = pickle.load(human_mouse_data_file)
 
-    x_train = np.stack(bot_keyboard_data + human_keyboard_data)
-    y_train = np.stack([np.array([0.0, 1.0])] * len(bot_keyboard_data) + [np.array([1.0, 0.0])] * len(human_keyboard_data))
+    x_train = np.stack(bot_mouse_data + human_mouse_data)
+    y_train = np.stack([np.array([0.0, 1.0])] * len(bot_mouse_data) + [np.array([1.0, 0.0])] * len(human_mouse_data))
 
-    if chunk != chunks:
+    if (human_chunk, bot_chunk) != validation_chunk:
       keyboard_events.fit(x_train, y_train)
     else:
-      metrics = keyboard_events.evaluate(x_train, y_train)
-      print(f"Loss: {metrics[0]} Accuracy: {metrics[1]}\n")
+      print(f"Loss: {keyboard_events.evaluate(x_train, y_train)}\n")
 
-keyboard_events.save("model/keyboard_events")
+keyboard_events.save("model/keyboard_events_v2")

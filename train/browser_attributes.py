@@ -13,30 +13,40 @@ chunks = 2
 metric = "browser"
 size = 200
 epoch_bundles = 10
+training_chunks = [(
+  f"preprocessed_data/human_{metric}_chunk_{chunk_num}_size_{size}_round_1.dat",
+  f"preprocessed_data/bot_{metric}_chunk_{chunk_num}_size_{size}_round_1.dat"
+) for chunk_num in range(2)] + [(
+  f"preprocessed_data/human_{metric}_chunk_{chunk_num}_size_{size}_round_2.dat",
+  f"preprocessed_data/bot_{metric}_chunk_{chunk_num}_size_{size}_round_2.dat"
+) for chunk_num in range(1)]
+
+validation_chunk = (
+  f"preprocessed_data/human_{metric}_chunk_2_size_{size}_round_1.dat",
+  f"preprocessed_data/bot_{metric}_chunk_2_size_{size}_round_1.dat"
+)
 
 for i in range(epoch_bundles):
   print(f"==== EPOCH BUNDLE {i + 1} ====")
 
-  chunk_beginning = list(range(chunks))
-  shuffle(chunk_beginning)
-  chunk_list = chunk_beginning + [chunks]
+  shuffle(training_chunks)
+  chunk_list = training_chunks + [validation_chunk]
   
-  for chunk in chunk_list:
-    print(f"Chunk {chunk}:" if chunk != chunks else "Validation")
+  for chunk_num, (human_chunk, bot_chunk) in enumerate(chunk_list):
+    print(f"Chunk {chunk_num}:" if (human_chunk, bot_chunk) != validation_chunk else "Validation")
 
-    with open(f"/Volumes/SRT4Data/bot_{metric}_chunk_{chunk}_size_{size}.dat", "rb") as bot_browser_data_file:
-      bot_browser_data = pickle.load(bot_browser_data_file)
+    with open(bot_chunk, "rb") as bot_mouse_data_file:
+      bot_mouse_data = pickle.load(bot_mouse_data_file)
 
-    with open(f"/Volumes/SRT4Data/human_{metric}_chunk_{chunk}_size_{size}.dat", "rb") as human_browser_data_file:
-      human_browser_data = pickle.load(human_browser_data_file)
+    with open(human_chunk, "rb") as human_mouse_data_file:
+      human_mouse_data = pickle.load(human_mouse_data_file)
 
-    x_train = np.vstack(bot_browser_data + human_browser_data)
-    y_train = np.vstack([np.array([0.0, 1.0])] * len(bot_browser_data) + [np.array([1.0, 0.0])] * len(human_browser_data))
+    x_train = np.stack(bot_mouse_data + human_mouse_data)
+    y_train = np.stack([np.array([0.0, 1.0])] * len(bot_mouse_data) + [np.array([1.0, 0.0])] * len(human_mouse_data))
 
-    if chunk != chunks:
+    if (human_chunk, bot_chunk) != validation_chunk:
       browser_attributes.fit(x_train, y_train)
     else:
-      metrics = browser_attributes.evaluate(x_train, y_train)
-      print(f"Loss: {metrics[0]} Accuracy: {metrics[1]}\n")
+      print(f"Loss: {browser_attributes.evaluate(x_train, y_train)}\n")
 
-browser_attributes.save("model/browser_attributes")
+browser_attributes.save("model/browser_attributes_v2")

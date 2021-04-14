@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 
 class MouseMovements:
   def __init__(self):
@@ -79,7 +80,8 @@ class MouseMovements:
         array[(nx - 3 if nx - 3 > -1 else 0) : (nx + 3 if nx + 3 < 600 else 600),
           (ny - 3 if ny - 3 > -1 else 0) : (ny + 3 if ny + 3 < 600 else 600), 2] = 0.5
 
-      arrays.append(array)
+      # Convert to SparseTensor for storage efficiency
+      arrays.append(tf.sparse.from_dense(tf.convert_to_tensor(array)))
 
     self.array_buf += arrays
   

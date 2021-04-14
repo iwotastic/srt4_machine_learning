@@ -7,6 +7,8 @@ from mouse_movement import MouseMovements # type: ignore
 from browser_attributes import BrowserAttributes # type: ignore
 from keyboard_events import KeyboardEvents # type: ignore
 
+round_label = 1
+
 exporters = [
   (KeyboardEvents, "kbd", 200),
   (BrowserAttributes, "browser", 200),
@@ -19,6 +21,10 @@ for Exporter, name, chuck_size in exporters:
 
   # Use exporter on each file
   for data_path in Path("data/human").iterdir():
+    # Skip data not in the current round.
+    if not data_path.stem.endswith(f"round{round_label}"):
+      continue
+
     with data_path.open() as data_file:
       data = json.loads(data_file.read()[2:-1])
       human_exp.use_file(data)
@@ -28,7 +34,7 @@ for Exporter, name, chuck_size in exporters:
 
   # Dump chunks
   for chunk in range(len(indicies) // chuck_size):
-    with open(f"/Volumes/SRT4Data/human_{name}_chunk_{chunk}_size_{chuck_size}.dat", "wb") as save_file:
+    with open(f"preprocessed_data/human_{name}_chunk_{chunk}_size_{chuck_size}_round_{round_label}.dat", "wb") as save_file:
       pickle.dump(
         [human_exp.array_buf[i] for i in indicies[chunk * chuck_size : (chunk + 1) * chuck_size]],
         save_file
@@ -41,6 +47,10 @@ for Exporter, name, chuck_size in exporters:
 
   # Use exporter on each file
   for data_path in Path("data/bot").iterdir():
+    # Skip data not in the current round.
+    if not data_path.stem.endswith(f"round{round_label}"):
+      continue
+    
     try:
       with data_path.open() as data_file:
         data = json.loads(data_file.read()[2:-1])
@@ -53,7 +63,7 @@ for Exporter, name, chuck_size in exporters:
 
   # Dump chunks
   for chunk in range(len(indicies) // chuck_size):
-    with open(f"/Volumes/SRT4Data/bot_{name}_chunk_{chunk}_size_{chuck_size}.dat", "wb") as save_file:
+    with open(f"preprocessed_data/bot_{name}_chunk_{chunk}_size_{chuck_size}_round_{round_label}.dat", "wb") as save_file:
       pickle.dump(
         [bot_exp.array_buf[i] for i in indicies[chunk * chuck_size : (chunk + 1) * chuck_size]],
         save_file

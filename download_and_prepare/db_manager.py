@@ -30,6 +30,16 @@ class DatabaseManager:
 
         return c.fetchall()
 
+  def fetch_submissions_from_group(self, group_name):
+    with self.conn:
+      with self.conn.cursor() as c:
+        try:
+          c.execute("SELECT * FROM submissions WHERE session_id IN (SELECT session_id FROM submitters WHERE invitee_id=(SELECT id FROM invite_groups WHERE description=%s))", (group_name,))
+        except:
+          return []
+
+        return c.fetchall()
+
   @classmethod
   def default(cls):
     """Method to return singleton database connection. This method will also
