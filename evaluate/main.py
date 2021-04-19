@@ -179,19 +179,35 @@ for data_path in Path("data/human").iterdir():
 
   evaled = evaluate_submission(data)
 
-  total_human_browser += 1
-  if evaled["browser"][0][0] > evaled["browser"][0][1] and not definitions_inverted:
-    true_pos_browser += 1
-  
-  for data_point in evaled["keyboard"]:
-    total_human_keyboard += 1
-    if data_point[0][0] > data_point[0][1] and not definitions_inverted:
-      true_pos_keyboard += 1
+  if definitions_inverted:
+    total_human_browser += 1
+    if evaled["browser"][0][0] < evaled["browser"][0][1]:
+      true_pos_browser += 1
+    
+    for data_point in evaled["keyboard"]:
+      total_human_keyboard += 1
+      if data_point[0][0] < data_point[0][1]:
+        true_pos_keyboard += 1
 
-  for data_point in evaled["mouse"]:
-    total_human_mouse += 1
-    if data_point[0][0] > data_point[0][1] and not definitions_inverted:
-      true_pos_mouse += 1
+    for data_point in evaled["mouse"]:
+      total_human_mouse += 1
+      if data_point[0][0] < data_point[0][1]:
+        true_pos_mouse += 1
+
+  else:
+    total_human_browser += 1
+    if evaled["browser"][0][0] > evaled["browser"][0][1]:
+      true_pos_browser += 1
+    
+    for data_point in evaled["keyboard"]:
+      total_human_keyboard += 1
+      if data_point[0][0] > data_point[0][1]:
+        true_pos_keyboard += 1
+
+    for data_point in evaled["mouse"]:
+      total_human_mouse += 1
+      if data_point[0][0] > data_point[0][1]:
+        true_pos_mouse += 1
 
 print("Begining bot data evaluation...")
 
@@ -205,19 +221,35 @@ for data_path in Path("data/bot").iterdir():
 
   evaled = evaluate_submission(data)
 
-  total_bot_browser += 1
-  if evaled["browser"][0][0] < evaled["browser"][0][1] and not definitions_inverted:
-    true_neg_browser += 1
-  
-  for data_point in evaled["keyboard"]:
-    total_bot_keyboard += 1
-    if data_point[0][0] < data_point[0][1] and not definitions_inverted:
-      true_neg_keyboard += 1
+  if definitions_inverted:
+    total_bot_browser += 1
+    if evaled["browser"][0][0] > evaled["browser"][0][1]:
+      true_neg_browser += 1
+    
+    for data_point in evaled["keyboard"]:
+      total_bot_keyboard += 1
+      if data_point[0][0] > data_point[0][1]:
+        true_neg_keyboard += 1
 
-  for data_point in evaled["mouse"]:
-    total_bot_mouse += 1
-    if data_point[0][0] < data_point[0][1] and not definitions_inverted:
-      true_neg_mouse += 1
+    for data_point in evaled["mouse"]:
+      total_bot_mouse += 1
+      if data_point[0][0] > data_point[0][1]:
+        true_neg_mouse += 1
+
+  else:
+    total_bot_browser += 1
+    if evaled["browser"][0][0] < evaled["browser"][0][1]:
+      true_neg_browser += 1
+    
+    for data_point in evaled["keyboard"]:
+      total_bot_keyboard += 1
+      if data_point[0][0] < data_point[0][1]:
+        true_neg_keyboard += 1
+
+    for data_point in evaled["mouse"]:
+      total_bot_mouse += 1
+      if data_point[0][0] < data_point[0][1]:
+        true_neg_mouse += 1
 
 print("Done!\n\n===================================\n")
 
