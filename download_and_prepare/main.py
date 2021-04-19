@@ -3,10 +3,12 @@ from collections import Counter
 
 id_counter = Counter()
 
-round_label = 2
+round_label = 3
 
 invite_groups = [
-  "Mrs. Ashley Email - Round 3"
+  "Mrs. Ashley Email - Round 3",
+  "BWSI - Round 3",
+  "Techbrick - Round 3"
 ]
 
 submissions = []
